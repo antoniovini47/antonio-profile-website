@@ -47,3 +47,6 @@ dist-ssr/
 
 # macOS specific metadata files
 *.DS_Store
+
+# Environment variables
+.env
