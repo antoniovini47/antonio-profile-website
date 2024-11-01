@@ -1,4 +1,4 @@
-export const data = {
+const rawData = {
   id: 510318776,
   urn: "ACoAAB5q2LgBemb6VQe-EiPiocqfN-aM3JyeBG0",
   username: "antoniovini47",
@@ -1113,3 +1113,5 @@ export const data = {
     pt: "Desenvolvedor Mobile - React Native | Typescript | Android | Java | Gradle",
   },
 };
+
+export default rawData;

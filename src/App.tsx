@@ -1,37 +1,55 @@
 import { useState, useEffect } from "react";
 import "./App.css";
 import { requestLinkedInData } from "./services/requestLinkedInProfileData";
-import { data } from "./assets/dataProfileRaw";
-
-function requestLocalData() {
-  return data;
-}
+import rawData from "./assets/dataProfileRaw";
 
 function App() {
+  // Main data
+  const [profileData, setProfileData] = useState<any>("");
+
+  // Informations used in the profile
   const [profileName, setProfileName] = useState<string>("Getting LinkedIn data...");
 
+  // Called when the component is mounted - Fetches the data for profile
   useEffect(() => {
-    console.log("Requesting data from LinkedIn...");
+    console.log("Requesting data...");
 
-    // ! This is a fake data for testing purposes - change it to the real data before deploying
-    // ! const profileData = requestLinkedInData();
-    // ! Set timeout to simulate the request waiting time
+    // Fetches the data from the local file for development purposes
+    async function fetchDataFromLocalFile() {
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+      setProfileData(rawData);
+      console.log(rawData);
+    }
 
-    setTimeout(() => {
-      const profileData = requestLocalData();
-      setProfileName(profileData.firstName + " " + profileData.lastName);
-    }, 1000);
+    // Fetches the data from LinkedIn
+    async function fetchDataFromLinkedIn() {
+      await requestLinkedInData()
+        .then((request) => {
+          console.log(request);
+          setProfileData(request);
+        })
+        .catch((error) => {
+          console.error(error);
+        })
+        .finally(() => {
+          console.log("Data fetched!");
+        });
+    }
+
+    // Chooses the data source depending on the environment
+    import.meta.env.DEV ? fetchDataFromLocalFile() : fetchDataFromLinkedIn();
   }, []);
+
+  // TODO: First get all the data from linkedin and saves on local storage, then parse for the view
+  // TODO: step by step to create a better user experience, like it was requesting each information
+  //Called when the profileData is updated - Updates the data on the website
+  useEffect(() => {
+    setProfileName(profileData.firstName + " " + profileData.lastName);
+  }, [profileData]);
 
   return (
     <>
       <h1>{profileName}</h1>
-      <div className="card">
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">Click on the Vite and React logos to learn more</p>
     </>
   );
 }
