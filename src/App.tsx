@@ -84,17 +84,17 @@ function App() {
           <SelectGroup>
             {supportedLocales &&
               supportedLocales.map((locale: supportedLocales) => (
-                <>
-                  <SelectItem key={`si${locale.country}`} value={locale.language}>
-                    {locale.iconUrl} {locale.language} - {locale.country}
-                    <Avatar className="h-5 w-5">
-                      <AvatarImage
-                        src={`https://flagicons.lipis.dev/flags/1x1/${locale.country.toLowerCase()}.svg`}
-                        alt={locale.language}
-                      />
-                    </Avatar>
-                  </SelectItem>
-                </>
+                <SelectItem key={`si${locale.country}`} value={locale.language}>
+                  <div className="flex gap-2">
+                    <img
+                      className="h-5 w-5 rounded-full"
+                      src={`https://flagicons.lipis.dev/flags/1x1/${locale.country.toLowerCase()}.svg`}
+                    />
+                    <p>
+                      {locale.iconUrl} {locale.language} - {locale.country}
+                    </p>
+                  </div>
+                </SelectItem>
               ))}
           </SelectGroup>
         </SelectContent>
