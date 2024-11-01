@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import "./App.css";
 import { requestLinkedInData } from "./services/requestLinkedInProfileData";
 import rawData from "./assets/dataProfileRaw";
+import { Button } from "./components/ui/button";
 
 function App() {
   // Main data
@@ -44,6 +45,7 @@ function App() {
 
   // TODO: First get all the data from linkedin and saves on local storage, then parse for the view
   // TODO: step by step to create a better user experience, like it was requesting each information
+
   //Called when the profileData is updated - Updates the data on the website
   useEffect(() => {
     setProfileName(profileData.firstName + " " + profileData.lastName);
@@ -52,6 +54,7 @@ function App() {
   return (
     <>
       <h1>{profileName}</h1>
+      <Button>E-mail me</Button>
     </>
   );
 }
