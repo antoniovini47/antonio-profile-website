@@ -3,13 +3,27 @@ import "./App.css";
 import { requestLinkedInData } from "./services/requestLinkedInProfileData";
 import rawData from "./assets/dataProfileRaw";
 import { Button } from "./components/ui/button";
+import { Avatar, AvatarImage } from "./components/ui/avatar";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "./components/ui/select";
+import { SelectGroup } from "@radix-ui/react-select";
+import { supportedLocales } from "./types/supportedLocales";
 
 function App() {
-  // Main data
+  // Main variables
   const [profileData, setProfileData] = useState<any>("");
+  // TODO: get and choose the language from the browser
+  const [supportedLocales, setSupportedLocales] = useState<supportedLocales[]>([]);
+  const [language, setLanguage] = useState("en - US");
 
-  // Informations used in the profile
+  // Profile variables
   const [profileName, setProfileName] = useState<string>("Getting LinkedIn data...");
+  const [profilePicture, setProfilePicture] = useState<string>("");
 
   // Called when the component is mounted - Fetches the data for profile
   useEffect(() => {
@@ -18,7 +32,7 @@ function App() {
     // Fetches the data from the local file for development purposes
     async function fetchDataFromLocalFile() {
       console.log("Fetching data from local file...");
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      await new Promise((resolve) => setTimeout(resolve, 500));
       setProfileData(rawData);
       console.log(rawData);
     }
@@ -46,15 +60,55 @@ function App() {
   // TODO: First get all the data from linkedin and saves on local storage, then parse for the view
   // TODO: step by step to create a better user experience, like it was requesting each information
 
-  //Called when the profileData is updated - Updates the data on the website
+  //Called when the profileData or the language is updated - Updates the data on the website
   useEffect(() => {
     setProfileName(profileData.firstName + " " + profileData.lastName);
-  }, [profileData]);
+    setProfilePicture(profileData.profilePicture);
+    setSupportedLocales(profileData.supportedLocales);
+  }, [profileData, setLanguage]);
 
+  // TODO: Create skeleton loading for the profile
+  // TODO: Create a language selector en/pt
+  // TODO: Create a theme selector light/dark
   return (
     <>
+      <Select
+        onValueChange={(value) => {
+          setLanguage(value);
+          console.log(value);
+        }}>
+        <SelectTrigger className="w-[150px] h-[50px]">
+          <SelectValue placeholder={language}></SelectValue>
+        </SelectTrigger>
+        <SelectContent>
+          <SelectGroup>
+            {supportedLocales &&
+              supportedLocales.map((locale: supportedLocales) => (
+                <>
+                  <SelectItem key={`si${locale.country}`} value={locale.language}>
+                    {locale.iconUrl} {locale.language} - {locale.country}
+                    <Avatar className="h-5 w-5">
+                      <AvatarImage
+                        src={`https://flagicons.lipis.dev/flags/1x1/${locale.country.toLowerCase()}.svg`}
+                        alt={locale.language}
+                      />
+                    </Avatar>
+                  </SelectItem>
+                </>
+              ))}
+          </SelectGroup>
+        </SelectContent>
+      </Select>
+
+      <Avatar>
+        <AvatarImage
+          src={profilePicture}
+          alt="@shadcn"
+          // TODO: Create a onClick function to open the image in a modal
+        />
+      </Avatar>
       <h1>{profileName}</h1>
-      <Button>E-mail me</Button>
+      <Button>{language == "en" ? <>E-mail me</> : <>Enviar E-mail</>}</Button>
     </>
   );
 }
