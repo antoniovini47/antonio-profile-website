@@ -16,6 +16,7 @@ function App() {
 
     // Fetches the data from the local file for development purposes
     async function fetchDataFromLocalFile() {
+      console.log("Fetching data from local file...");
       await new Promise((resolve) => setTimeout(resolve, 2000));
       setProfileData(rawData);
       console.log(rawData);
@@ -23,6 +24,7 @@ function App() {
 
     // Fetches the data from LinkedIn
     async function fetchDataFromLinkedIn() {
+      console.log("Fetching data from LinkedIn...");
       await requestLinkedInData()
         .then((request) => {
           console.log(request);
