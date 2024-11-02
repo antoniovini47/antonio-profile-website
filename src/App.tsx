@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import "./App.css";
+import { defaultValues } from "./types/defaultValues";
 import { requestLinkedInData } from "./services/requestLinkedInProfileData";
 import rawData from "./assets/dataProfileRaw";
 import { Button } from "./components/ui/button";
@@ -13,6 +14,8 @@ import {
 } from "./components/ui/select";
 import { SelectGroup } from "@radix-ui/react-select";
 import { supportedLocales } from "./types/supportedLocales";
+import { Separator } from "@/components/ui/separator";
+import { Skeleton } from "@/components/ui/skeleton";
 
 function App() {
   // Main variables
@@ -33,7 +36,7 @@ function App() {
     // Fetches the data from the local file for development purposes
     async function fetchDataFromLocalFile() {
       console.log("Fetching data from local file...");
-      await new Promise((resolve) => setTimeout(resolve, 500));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
       setProfileData(rawData);
       console.log(rawData);
     }
@@ -64,11 +67,11 @@ function App() {
   //Called when the profileData or the language is updated - Updates the data on the website
   useEffect(() => {
     if (!profileData) return;
-    setProfileName(profileData.firstName + " " + profileData.lastName);
+    setProfileName(
+      profileData.multiLocaleFirstName[language] + " " + profileData.multiLocaleLastName[language]
+    );
     setProfilePicture(profileData.profilePicture);
     setSupportedLocales(profileData.supportedLocales);
-    // locale is a variable that is "en" or "pt"
-    // how to pass the variable valuen instead of the .en?
     setHeadline(profileData.multiLocaleHeadline[language]);
     console.log(profileData.multiLocaleHeadline[language]);
   }, [profileData, language]);
@@ -114,17 +117,26 @@ function App() {
           </SelectGroup>
         </SelectContent>
       </Select>
-
-      <Avatar>
-        <AvatarImage
-          src={profilePicture}
-          alt="@shadcn"
-          // TODO: Create a onClick function to open the image in a modal
+      {profileData ? (
+        <Avatar
+          className={`w-${defaultValues.profilePictureSize} h-${defaultValues.profilePictureSize}`}>
+          <AvatarImage
+            src={profilePicture}
+            // TODO: Create a onClick function to open the image in a modal
+          />
+        </Avatar>
+      ) : (
+        <Skeleton
+          className={`w-${defaultValues.profilePictureSize} h-${defaultValues.profilePictureSize} rounded-full`}
         />
-      </Avatar>
-      <h1>{profileName}</h1>
-      <h2>{headline}</h2>
-      <Button>{language == "en" ? <>E-mail me</> : <>Enviar E-mail</>}</Button>
+      )}
+      {profileData ? <h1>{profileName}</h1> : <Skeleton className="w-[500px] h-[80px]" />}
+      {profileData ? (
+        <h2>{headline}</h2>
+      ) : (
+        <Skeleton className="w-[500px] h-[40px] margin-top-40" />
+      )}
+      <Separator />
     </>
   );
 }
