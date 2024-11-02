@@ -19,11 +19,12 @@ function App() {
   const [profileData, setProfileData] = useState<any>("");
   // TODO: get and choose the language from the browser
   const [supportedLocales, setSupportedLocales] = useState<supportedLocales[]>([]);
-  const [language, setLanguage] = useState("en - US");
+  const [language, setLanguage] = useState("en");
 
   // Profile variables
   const [profileName, setProfileName] = useState<string>("Getting LinkedIn data...");
   const [profilePicture, setProfilePicture] = useState<string>("");
+  const [headline, setHeadline] = useState<string>("Getting headline...");
 
   // Called when the component is mounted - Fetches the data for profile
   useEffect(() => {
@@ -62,10 +63,15 @@ function App() {
 
   //Called when the profileData or the language is updated - Updates the data on the website
   useEffect(() => {
+    if (!profileData) return;
     setProfileName(profileData.firstName + " " + profileData.lastName);
     setProfilePicture(profileData.profilePicture);
     setSupportedLocales(profileData.supportedLocales);
-  }, [profileData, setLanguage]);
+    // locale is a variable that is "en" or "pt"
+    // how to pass the variable valuen instead of the .en?
+    setHeadline(profileData.multiLocaleHeadline[language]);
+    console.log(profileData.multiLocaleHeadline[language]);
+  }, [profileData, language]);
 
   // TODO: Create skeleton loading for the profile
   // TODO: Create a language selector en/pt
@@ -78,7 +84,16 @@ function App() {
           console.log(value);
         }}>
         <SelectTrigger className="w-[150px] h-[50px]">
-          <SelectValue placeholder={language}></SelectValue>
+          <SelectValue
+            placeholder={
+              <div className="flex gap-2">
+                <img
+                  className="h-5 w-5 rounded-full"
+                  src={`https://flagicons.lipis.dev/flags/1x1/us.svg`}
+                />
+                <p>en - US</p>
+              </div>
+            }></SelectValue>
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
@@ -91,7 +106,7 @@ function App() {
                       src={`https://flagicons.lipis.dev/flags/1x1/${locale.country.toLowerCase()}.svg`}
                     />
                     <p>
-                      {locale.iconUrl} {locale.language} - {locale.country}
+                      {locale.language} - {locale.country}
                     </p>
                   </div>
                 </SelectItem>
@@ -108,6 +123,7 @@ function App() {
         />
       </Avatar>
       <h1>{profileName}</h1>
+      <h2>{headline}</h2>
       <Button>{language == "en" ? <>E-mail me</> : <>Enviar E-mail</>}</Button>
     </>
   );
