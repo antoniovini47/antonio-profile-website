@@ -17,6 +17,11 @@ import { supportedLocales } from "./types/supportedLocales";
 import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 
+export interface LanguagesData {
+  name: string;
+  proficiency: "FULL_PROFESSIONAL" | "PROFESSIONAL_WORKING" | "NATIVE_OR_BILINGUAL" | "ELEMENTARY";
+}
+
 function App() {
   // Main variables
   const [profileData, setProfileData] = useState<any>(null);
@@ -30,6 +35,7 @@ function App() {
   const [profilePicture, setProfilePicture] = useState<string>("");
   const [headline, setHeadline] = useState<string>("Getting headline...");
   const [positions, setPositions] = useState<any[]>([]);
+  const [languages, setLanguages] = useState<LanguagesData[]>([]);
 
   // Called when the component is mounted - Fetches the data for profile
   useEffect(() => {
@@ -72,6 +78,7 @@ function App() {
     setProfileName(
       profileData.multiLocaleFirstName[language] + " " + profileData.multiLocaleLastName[language]
     );
+    setLanguages(profileData.languages);
     setProfilePicture(profileData.profilePicture);
     setSupportedLocales(profileData.supportedLocales);
     setHeadline(profileData.multiLocaleHeadline[language]);
@@ -141,7 +148,22 @@ function App() {
           <Skeleton className="w-[500px] h-[40px] margin-top-40" />
         )}
       </div>
+
       <Separator />
+
+      {/* Language logic
+      <div>
+        {languages.map((language: LanguagesData) => (
+          <>
+            <h1>{language.name + " - " + language.proficiency}</h1>
+            <br />
+          </>
+        ))}
+        <h1>{languages[0].name}</h1>
+      </div> */}
+
+      <Separator />
+
       <div className="content">
         <div className="professionalExperience">
           <h3>Professional Experience</h3>
@@ -166,6 +188,8 @@ function App() {
           </div>
         </div>
       </div>
+
+      <div></div>
     </>
   );
 }
